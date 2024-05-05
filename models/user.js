@@ -1,11 +1,12 @@
-const {Model, DataTypes} = require('sequelize');
-const db = require('../db/connection');
+const { Model, DataTypes } = require("sequelize");
+const db = require("../database/connection");
 
 
 
-class User extends Model{
+class User extends Model {
     static id;
     static name;
+    static lastName;
     static email;
     static phone;
     static image;
@@ -16,37 +17,39 @@ User.init({
     name: {
         type: DataTypes.STRING,
     },
-    lastname: {
-        type: DataTypes.STRING,
+    lastName: {
+        type: DataTypes.STRING
     },
     email: {
         type: DataTypes.STRING,
         unique: true
     },
     phone: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING
     },
     image: {
         type: DataTypes.STRING,
         allowNull: true
     },
     password: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING
     }
-
 }, {
     sequelize: db,
-    modelName: 'User',
+    modelName: 'User'
 });
 
 User.Role = User.belongsTo(require('./role'), {foreignKey: 'role_id'});
 
-User.prototype.toJSON = function(){
+User.prototype.toJSON = function() {
     const user = this.get();
-    delete user.password;
+    delete user.password; // Delete this property password
+    // Include the role_id
     user.role_id = this.getDataValue('role_id');
-    return user; 
-}
+
+    return user;
+};
+
 
 
 module.exports = User;
