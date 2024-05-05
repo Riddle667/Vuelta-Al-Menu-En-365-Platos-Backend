@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const Role = require("../models/role");
 
-const generateJWT = require("../helpers/generate-jwt");
+//const generateJWT = require("../helpers/generate-jwt");
 
 
 
