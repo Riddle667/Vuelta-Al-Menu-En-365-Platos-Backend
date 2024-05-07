@@ -1,9 +1,5 @@
 const { Model, DataTypes } = require("sequelize");
 const db = require("../database/connection");
-
-
-
-
 class Role extends Model {
     static id;
     static name;

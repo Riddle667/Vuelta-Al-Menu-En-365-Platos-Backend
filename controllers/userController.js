@@ -1,10 +1,6 @@
 const { request, response } = require("express")
-
 const User = require("../models/user")
-
 const emailHelper = require('../helpers/send-email');
-
-
 
 const getUsers = async (req = request, res = response) => {
     try {
@@ -18,7 +14,6 @@ const getUsers = async (req = request, res = response) => {
         })
     }
 }
-
 
 const changePassword = async (req = request, res = response) => {
     const { email } = req.body;

@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const logger = require('morgan');
-
 const db = require('../database/connection');
 const Role = require('./role');
 const User = require('./user');

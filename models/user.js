@@ -1,8 +1,5 @@
 const { Model, DataTypes } = require("sequelize");
 const db = require("../database/connection");
-
-
-
 class User extends Model {
     static id;
     static name;
@@ -49,7 +46,5 @@ User.prototype.toJSON = function() {
 
     return user;
 };
-
-
 
 module.exports = User;
