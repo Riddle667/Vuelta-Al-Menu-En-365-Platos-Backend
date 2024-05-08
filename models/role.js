@@ -1,6 +1,9 @@
 const { Model, DataTypes } = require("sequelize");
-const db = require("../database/connection");
-class Role extends Model {
+const db = require("../db/connection");
+
+
+
+class Role extends Model{
     static id;
     static name;
 }
@@ -14,5 +17,4 @@ Role.init({
     sequelize: db,
     modelName: 'Role'
 });
-
 module.exports = Role;

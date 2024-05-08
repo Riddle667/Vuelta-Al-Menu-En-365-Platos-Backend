@@ -1,10 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 const logger = require('morgan');
-const db = require('../database/connection');
-const Role = require('./role');
-const User = require('./user');
+
 const fileUpload = require('express-fileupload');
+const db = require('../db/connection');
+const Role = require('../models/role');
+const User = require('../models/user');
 
 class Server {
     constructor() {
