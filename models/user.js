@@ -50,6 +50,4 @@ User.prototype.toJSON = function() {
     return user;
 };
 
-
-
 module.exports = User;

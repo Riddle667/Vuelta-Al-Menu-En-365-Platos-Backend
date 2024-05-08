@@ -2,12 +2,11 @@ const { response, request } = require("express");
 const User = require("../models/user");
 const cloudinary = require('cloudinary').v2;
 
-
 const updateImageCloudinary = async (req = request, res = response) => {
+
     try {
         const { collection, id } = req.params;
         let model;
-
         switch (collection) {
             case 'users':
                 model = await User.findByPk(id);

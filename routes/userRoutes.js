@@ -5,8 +5,6 @@ const { getUsers, changePassword } = require("../controllers/userController");
 const { validateJWT } = require("../middlewares/validate-jwt");
 const { validateFields } = require("../middlewares/validate-fields");
 const { verifyEmailLogin } = require("../helpers/verify-email");
-
-
 const router = Router();
 
 router.get('/', [
@@ -19,6 +17,5 @@ router.post('/change-password',[
     check('email', 'the field email is required').custom(verifyEmailLogin),
     validateFields
 ], changePassword);
-
 
 module.exports = router;

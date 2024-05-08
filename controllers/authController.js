@@ -1,28 +1,16 @@
 const { response, request } = require("express");
 const bcryptjs = require("bcryptjs");
-
 const jwt = require("jsonwebtoken");
-
-
 const User = require("../models/user");
 const Role = require("../models/role");
-
-//const generateJWT = require("../helpers/generate-jwt");
-
-
-
-
-
+const generateJWT = require("../helpers/generate-jwt");
 
 const login = async (req = request, res = response) => {
 
     try {
 
         const { email, password } = req.body;
-
-
         const user = await User.findOne({ where: { email } });
-
 
         // Verify password
         const validPassword = bcryptjs.compareSync(password, user.password);
@@ -163,7 +151,6 @@ const validateToken = async (req = request, res = response) => {
         });
     }
 }
-
 
 module.exports = {
     login,
