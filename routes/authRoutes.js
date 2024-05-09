@@ -1,14 +1,16 @@
-const { Router} = require('express');
-
-
+const { Router, response, request} = require('express');
+const { register, login } = require('../controllers/authController');
+const { check } = require('express-validator');
+const { validateFields } = require('../middleware/validate-fields');
+const { verifyEmail } = require('../helpers/verify-email');
 
 
 const router = Router();
 
-router.get('/login', ( req = request, res = response) => {
-    res.status(200).json({
-        msg: 'Login'
-    })
-})
+router.post('/login', login);
+
+router.post('/register', register);
+
+//http://localhost:8080/api/auth/register
 
 module.exports = router;
