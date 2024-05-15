@@ -7,6 +7,7 @@ const db = require('../db/connection');
 const Role = require('../models/role');
 const User = require('../models/user');
 const Category = require('../models/category');
+const Product = require('./product');
 
 class Server {
     constructor() {
@@ -19,7 +20,8 @@ class Server {
             auth: '/api/auth',
             user: '/api/user',
             upload: '/api/upload',
-            category: '/api/category'
+            category: '/api/category',
+            product: '/api/product'
         }
 
         // Connect to database
@@ -68,6 +70,7 @@ class Server {
         this.app.use(this.paths.user, require('../routes/userRoutes'));
         this.app.use(this.paths.upload, require('../routes/uploadRoutes'));
         this.app.use(this.paths.category, require('../routes/categoryRoutes'));
+        this.app.use(this.paths.product, require('../routes/productRoutes'));
     }
 
     listen() {

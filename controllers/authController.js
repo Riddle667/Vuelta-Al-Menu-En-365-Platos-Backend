@@ -38,7 +38,8 @@ const login = async (req = request, res = response) => {
 
         res.status(200).json({
             success: true,
-            data: userData
+            data: userData,
+            token: token,
         });
     } catch (error) {
         console.log(error);
@@ -89,6 +90,7 @@ const register = async (req = request, res = response) => {
         res.status(201).json({
             success: true,
             data: dataUser,
+            token: token,
             message: 'User created'
         });
 
