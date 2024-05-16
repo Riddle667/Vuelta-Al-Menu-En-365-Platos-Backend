@@ -8,6 +8,7 @@ const generateJWT = require("../helpers/generate-jwt");
 const login = async (req = request, res = response) => {
 
     try {
+        console.log(req.body);
 
         const { email, password } = req.body;
         const user = await User.findOne({ where: { email } });
@@ -50,9 +51,10 @@ const login = async (req = request, res = response) => {
 
 
 const register = async (req = request, res = response) => {
+
     try {
         const { name: nameReq,
-            lastName: lastNameReq,
+            lastname: lastNameReq,
             email: emailReq,
             password: passwordReq,
             phone: phoneReq } = req.body;
@@ -74,6 +76,7 @@ const register = async (req = request, res = response) => {
         const salt = bcryptjs.genSaltSync();
         user.password = bcryptjs.hashSync(user.password, salt);
         await user.save();
+
 
         // Generate JWT
         const token = await generateJWT(user.id);
