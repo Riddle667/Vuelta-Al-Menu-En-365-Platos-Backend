@@ -89,7 +89,6 @@ const register = async (req = request, res = response) => {
         res.status(201).json({
             success: true,
             data: dataUser,
-            token: token,
             message: 'User created'
         });
 
