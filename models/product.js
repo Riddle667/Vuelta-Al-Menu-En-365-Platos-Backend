@@ -1,19 +1,17 @@
 const { Model, DataTypes } = require("sequelize");
 const db = require("../db/connection");
 
-
-
-class Category extends Model{
+class Product extends Model{
     static id;
-    static state;
+    static price;
     static name;
     static description;
     static image;
 }
 
-Category.init({
-    state: {
-        type: DataTypes.BOOLEAN,
+Product.init({
+    price: {
+        type: DataTypes.DECIMAL(10, 2),
         defaultValue: true
     },
     name: {
@@ -24,11 +22,10 @@ Category.init({
         type: DataTypes.STRING
     },
     image: {
-        type: DataTypes.STRING
-    }
+        type: DataTypes.ARRAY(DataTypes.STRING), // Aquí definimos que image es una lista de Strings
+    },
 }, {
     sequelize: db,
-    modelName: 'Category'
+    modelName: 'Product'
 });
-
-module.exports = Category;
+module.exports = Product;
