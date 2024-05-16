@@ -52,9 +52,3 @@ module.exports = {
     getUsers,
     changePassword
 }
-
-
-module.exports = {
-    getUsers,
-    changePassword
-}
