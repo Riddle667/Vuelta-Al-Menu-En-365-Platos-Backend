@@ -39,7 +39,6 @@ const login = async (req = request, res = response) => {
         res.status(200).json({
             success: true,
             data: userData,
-            token: token,
         });
     } catch (error) {
         console.log(error);

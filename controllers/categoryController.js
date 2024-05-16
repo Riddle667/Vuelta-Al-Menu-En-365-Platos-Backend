@@ -10,6 +10,15 @@ const createCategory = async (req = request, res = response) => {
             description: descriptionReq,
             image: imageReq
         } = req.body;
+
+        const categoryExist = await Category.findOne({ where: { name: nameReq } });
+
+        if (categoryExist) {
+            return res.status(400).json({
+                success: false,
+                message: 'This category already exists'
+            });
+        }
     
         const category = await Category.create({
             name: nameReq,
@@ -23,6 +32,7 @@ const createCategory = async (req = request, res = response) => {
             success: true,
         });
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             success: false,
             message: 'Server error'
