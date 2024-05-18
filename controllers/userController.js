@@ -1,6 +1,6 @@
 const { request, response } = require("express")
 const User = require("../models/user")
-const emailHelper = require('../helpers/send-email');
+const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
 
 const getUsers = async (req = request, res = response) => {
@@ -17,9 +17,14 @@ const getUsers = async (req = request, res = response) => {
 }
 
 const changePassword = async (req = request, res = response) => {
-    const { userId, newPassword } = req.body;
+    const { token, newPassword } = req.body;
 
     try {
+        // Verificar el token
+        const decoded = jwt.verify(token, process.env.SECRET_OR_PRIVATE_KEY); // Verifica el token usando la clave secreta
+        const userId = decoded.id; // Extrae el ID del usuario del token decodificado
+
+        // Buscar el usuario por ID
         const user = await User.findByPk(userId);
 
         if (!user) {
@@ -29,10 +34,11 @@ const changePassword = async (req = request, res = response) => {
             });
         }
 
-        // Hash the new password
+        // Hashear la nueva contraseña
         const salt = bcryptjs.genSaltSync();
         user.password = bcryptjs.hashSync(newPassword, salt);
-        
+
+        // Guardar el nuevo password en la base de datos
         await user.save();
 
         res.status(200).json({
