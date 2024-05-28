@@ -7,7 +7,9 @@ const db = require('../db/connection');
 const Role = require('../models/role');
 const User = require('../models/user');
 const Category = require('../models/category');
-const Product = require('./product');
+const Product = require('../models/product');
+const Address = require('../models/address');
+const Order = require('./order');
 
 class Server {
     constructor() {
@@ -21,7 +23,9 @@ class Server {
             user: '/api/user',
             upload: '/api/upload',
             category: '/api/category',
-            product: '/api/product'
+            product: '/api/product',
+            address: '/api/address',
+            order: '/api/order'
         }
 
         // Connect to database
@@ -40,6 +44,9 @@ class Server {
             await Role.sync({ force: false });
             await User.sync({ force: false });
             await Category.sync({ force: false });
+            await Product.sync({ force: false });
+            await Order.sync({ force: false });
+            await Address.sync({ force: false });
             console.log('DATABASE CONNECTED');
         } catch (error) {
             console.log(error);
@@ -71,6 +78,7 @@ class Server {
         this.app.use(this.paths.upload, require('../routes/uploadRoutes'));
         this.app.use(this.paths.category, require('../routes/categoryRoutes'));
         this.app.use(this.paths.product, require('../routes/productRoutes'));
+        this.app.use(this.paths.address, require('../routes/addressRoutes'));
     }
 
     listen() {

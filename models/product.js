@@ -12,20 +12,24 @@ class Product extends Model{
 Product.init({
     price: {
         type: DataTypes.DECIMAL(10, 2),
-        defaultValue: true
+        defaultValue: 0.0 // Asegúrate de usar un valor numérico apropiado
     },
     name: {
         type: DataTypes.STRING,
-        unique: true
+        unique: true,
+        allowNull: false
     },
     description: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: true
     },
     image: {
-        type: DataTypes.ARRAY(DataTypes.STRING), // Aquí definimos que image es una lista de Strings
-    },
+        type: DataTypes.STRING,
+        allowNull: true
+    }
 }, {
     sequelize: db,
     modelName: 'Product'
 });
+
 module.exports = Product;
