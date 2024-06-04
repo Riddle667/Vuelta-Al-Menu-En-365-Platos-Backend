@@ -10,6 +10,8 @@ const Category = require('../models/category');
 const Product = require('../models/product');
 const Address = require('../models/address');
 const Order = require('./order');
+const Image = require('./Image');
+const OrderProduct = require('./orderProduct');
 
 class Server {
     constructor() {
@@ -25,7 +27,8 @@ class Server {
             category: '/api/category',
             product: '/api/product',
             address: '/api/address',
-            order: '/api/order'
+            order: '/api/order',
+            image: '/api/image'
         }
 
         // Connect to database
@@ -47,6 +50,8 @@ class Server {
             await Product.sync({ force: false });
             await Order.sync({ force: false });
             await Address.sync({ force: false });
+            await Image.sync({ force: false });
+            await OrderProduct.sync({ force: false });
             console.log('DATABASE CONNECTED');
         } catch (error) {
             console.log(error);
@@ -79,6 +84,8 @@ class Server {
         this.app.use(this.paths.category, require('../routes/categoryRoutes'));
         this.app.use(this.paths.product, require('../routes/productRoutes'));
         this.app.use(this.paths.address, require('../routes/addressRoutes'));
+        this.app.use(this.paths.order, require('../routes/orderRoutes'));
+        this.app.use(this.paths.image, require('../routes/imageRoutes'));
     }
 
     listen() {
