@@ -8,9 +8,9 @@ const router = Router();
 router.post('/create-product', [
     check('name', 'Name is required').not().isEmpty(),
     check('description', 'Description is required').not().isEmpty(),
-    check('image', 'Image is required').not().isEmpty(),
+    check('images', 'At least one image is required').isArray({ min: 1 }),
     check('price', 'Price must be a number').isNumeric(),
-    check('categoryId', 'Category ID is required').not().isEmpty(),
+    check('categoryIds', 'At least one category is required').isArray({ min: 1 }),
     validateFields
 ], createProduct);
 

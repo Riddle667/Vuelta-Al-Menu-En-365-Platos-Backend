@@ -1,38 +1,39 @@
 const { response, request } = require("express");
 const Product = require("../models/product");
-
+const Image = require("../models/Image");
+const Category_Product = require("../models/category_product");
 
 const createProduct = async (req = request, res = response) => {
-    console.log(req.body);
-
     try {
-        const { 
-            name: nameReq,
-            description: descriptionReq,
-            image: imageReq,
-            price: priceReq,
-            categoryId: categoryId
-        } = req.body;
-        
+        const { name, description, images, price, categoryIds } = req.body;
+
         const product = await Product.create({
-            name: nameReq,
-            description: descriptionReq,
-            price: priceReq,
+            name,
+            description,
+            price
         });
 
-        await product.save();
-        
-        res.status(200).json({
+        await Promise.all(images.map(async (image) => {
+            await Image.create({ path: image, Productid: product.id });
+        }));
+
+        await Promise.all(categoryIds.map(async (categoryId) => {
+            await Category_Product.create({ Categoryid: categoryId, Productid: product.id });
+        }));
+
+        res.status(201).json({
             success: true,
+            message: 'Producto creado con exito',
+            product
         });
-    }   catch (error) {
+    } catch (error) {
         res.status(500).json({
             success: false,
-            message: 'Server error'
+            message: 'Server error',
+            error: error.message
         });
     }
-
-}  
+};
 
 module.exports = {
     createProduct,
