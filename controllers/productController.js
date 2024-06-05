@@ -17,9 +17,7 @@ const createProduct = async (req = request, res = response) => {
         const product = await Product.create({
             name: nameReq,
             description: descriptionReq,
-            image: imageReq,
             price: priceReq,
-            categoryId: categoryId
         });
 
         await product.save();
