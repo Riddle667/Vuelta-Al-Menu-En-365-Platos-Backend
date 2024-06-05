@@ -14,20 +14,21 @@ class Order extends Model {
 
 Order.init({
     total_price: {
-        type: DataTypes.DECIMAL(10, 2),
-        defaultValue: 0.0
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     },
     status: {
         type: DataTypes.ENUM,
-        values: ['created', 'pend', 'shipped', 'delivered', 'cancelled'],
+        values: ['created', 'pending', 'on_the_way', 'delivered'],
         defaultValue: 'created'
     },
     date: {
         type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
+        allowNull: true
     },
     cant: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     }
 }, {
     sequelize: db,
@@ -37,7 +38,8 @@ Order.init({
 Order.belongsToMany(Product, {
     through: OrderProduct,
     foreignKey: 'order_id',
-    otherKey: 'product_id'
+    otherKey: 'product_id',
+    onDelete: 'CASCADE'
 });
 
 module.exports = Order;

@@ -2,68 +2,72 @@ const { request, response } = require("express");
 const Order = require("../models/order");
 const Product = require("../models/product");
 const OrderProduct = require("../models/orderProduct");
+const User = require("../models/user");
+const db = require("../db/connection");
+const moment = require("moment");
 
-
-
-const addToCart = async (req = request, res = response) => {
+const manageCart = async (req = request, res = response) => {
     const { id } = req.user;
-    const { productId, quantity } = req.body;
+    const { products, total } = req.body;
+
+    if (!products || !Array.isArray(products) || products.length === 0) {
+        return res.status(400).json({
+            success: false,
+            message: 'Invalid products array'
+        });
+    }
+
+    const transaction = await db.transaction();
 
     try {
-        const order = await Order.findOne({
-            where: {
-                user_id: id,
-                status: 'PENDING'
+        let order = await Order.create({
+            total_price: total,
+            date: new Date(),
+            user_id: id
+        }, { transaction });
+
+        for (const product of products) {
+            if (!product.id || !product.quantity || !product.price || !product.name || product.quantity < 1) {
+                await transaction.rollback();
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid product data'
+                });
             }
-        });
-        
-        if (!order) {
-            return res.status(400).json({
-                success: false,
-                message: 'Order not found'
-            });
+
+            await OrderProduct.create({
+                order_id: order.id,
+                product_id: product.id,
+                quantity: product.quantity,
+                price: product.price
+            }, { transaction });
+
+            order.cant += product.quantity;
+            
         }
+        await order.save({ transaction });
+        await transaction.commit();
 
-        const product = await Product.findByPk(productId);
-
-        if (!product) {
-            return res.status(400).json({
-                success: false,
-                message: 'Product not found'
-            });
-        }
-        
-        order.setProducts(product, {
-            through: {
-                quantity,
-                price: product.price * quantity
-            }
+        order = await Order.findByPk(order.id, {
+            include: [
+                {
+                    model: Product,
+                    through: {
+                        attributes: ['quantity', 'price']
+                    }
+                }
+            ]
         });
-        
 
-        // if (orderProduct) {
-        //     orderProduct.quantity += quantity;
-        //     orderProduct.price += product.price * quantity;
-        //     await orderProduct.save();
-        // } else {
-        //     await OrderProduct.create({
-        //         order_id: order.id,
-        //         product_id: productId,
-        //         quantity,
-        //         price: product.price * quantity
-        //     });
-        // }
+        return res.status(201).json({
+            success: true,
+            message: 'Order created successfully',
+            order
+        });
 
-        // order.total_price += product.price * quantity;
-        // await order.save();
-
-        // return res.json({
-        //     success: true,
-        //     message: 'Product added to cart'
-        // });
-    }
-    catch (error) {
-        console.log(error);
+    } catch (error) {
+        await transaction.rollback();
+        console.error(error);
         return res.status(500).json({
             success: false,
             message: 'Internal server error'
@@ -72,5 +76,5 @@ const addToCart = async (req = request, res = response) => {
 }
 
 module.exports = { 
-    addToCart 
+    manageCart 
 };

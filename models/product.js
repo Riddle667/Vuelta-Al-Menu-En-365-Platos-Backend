@@ -13,8 +13,8 @@ class Product extends Model{
 
 Product.init({
     price: {
-        type: DataTypes.DECIMAL(10, 2),
-        defaultValue: 0.0 // Asegúrate de usar un valor numérico apropiado
+        type: DataTypes.INTEGER,
+        defaultValue: 0 // Asegúrate de usar un valor numérico apropiado
     },
     name: {
         type: DataTypes.STRING,
