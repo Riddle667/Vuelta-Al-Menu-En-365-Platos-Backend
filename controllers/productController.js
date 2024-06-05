@@ -7,17 +7,17 @@ const createProduct = async (req = request, res = response) => {
 
     try {
         const { 
-            name: nameReq,
-            description: descriptionReq,
-            image: imageReq,
-            price: priceReq,
-            categoryId: categoryId
+            name,
+            description,
+            price,
+            images,
+            categories
         } = req.body;
         
         const product = await Product.create({
-            name: nameReq,
-            description: descriptionReq,
-            price: priceReq,
+            name,
+            description,
+            price
         });
 
         await product.save();

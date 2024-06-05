@@ -3,6 +3,7 @@ const db = require("../db/connection");
 const Image = require("./Image");
 const OrderProduct = require("./orderProduct");
 const Order = require("./order");
+const Category = require("./category");
 
 class Product extends Model{
     static id;
@@ -31,5 +32,12 @@ Product.init({
 });
 
 Product.Image = Product.hasMany(Image, {foreignKey: 'product_id', onDelete: 'CASCADE'});
+
+Product.belongsToMany( Category, {
+    through: 'Category_Product',
+    foreignKey: 'product_id',
+    otherKey: 'category_id',
+    onDelete: 'CASCADE'
+});
 
 module.exports = Product;
