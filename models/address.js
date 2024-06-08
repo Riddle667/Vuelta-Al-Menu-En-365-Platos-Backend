@@ -13,16 +13,20 @@ class Address extends Model{
 
 Address.init({
     name: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false
     },
     street: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false
     },
     district: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false
     },
     reference_point: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false
     }
 }, {
     sequelize: db,

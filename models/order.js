@@ -1,6 +1,8 @@
 const { Model, DataTypes } = require("sequelize");
 const db = require("../db/connection");
 const User = require("./user");
+const OrderProduct = require("./orderProduct");
+const Product = require("./product");
 
 class Order extends Model {
     static id;
@@ -12,23 +14,32 @@ class Order extends Model {
 
 Order.init({
     total_price: {
-        type: DataTypes.DECIMAL(10, 2),
-        defaultValue: 0.0
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     },
     status: {
-        type: DataTypes.STRING,
-        defaultValue: 'Pendiente'
+        type: DataTypes.ENUM,
+        values: ['created', 'pending', 'on_the_way', 'delivered'],
+        defaultValue: 'created'
     },
     date: {
         type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
+        allowNull: true
     },
     cant: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     }
 }, {
     sequelize: db,
     modelName: 'Order'
+});
+
+Order.belongsToMany(Product, {
+    through: OrderProduct,
+    foreignKey: 'order_id',
+    otherKey: 'product_id',
+    onDelete: 'CASCADE'
 });
 
 module.exports = Order;
