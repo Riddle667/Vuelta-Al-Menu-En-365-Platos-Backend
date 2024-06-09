@@ -1,7 +1,8 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const logger = require('morgan');
-
 const fileUpload = require('express-fileupload');
 const db = require('../db/connection');
 const Role = require('../models/role');
@@ -9,14 +10,14 @@ const User = require('../models/user');
 const Category = require('../models/category');
 const Product = require('../models/product');
 const Address = require('../models/address');
-const Order = require('./order');
-const Image = require('./Image');
-const OrderProduct = require('./orderProduct');
+const Order = require('../models/order');
+const Image = require('../models/Image');
+const OrderProduct = require('../models/orderProduct');
 
 class Server {
     constructor() {
         this.app = express();
-        this.port = process.env.PORT;
+        this.port = process.env.PORT || 3000;
         this.server = require('http').createServer(this.app);
 
         // Paths
@@ -29,7 +30,7 @@ class Server {
             address: '/api/address',
             order: '/api/order',
             image: '/api/image'
-        }
+        };
 
         // Connect to database
         this.dbConnection();
@@ -59,7 +60,6 @@ class Server {
     }
 
     middlewares() {
-
         // Morgan
         this.app.use(logger('dev'));
 
