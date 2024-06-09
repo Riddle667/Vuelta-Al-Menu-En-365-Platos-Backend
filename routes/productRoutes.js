@@ -7,11 +7,12 @@ const { validateJWT } = require('../middleware/validate-jwt');
 const router = Router();
 
 router.post('/create-product', [
-    validateJWT,
     check('name', 'Name is required').not().isEmpty(),
     check('description', 'Description is required').not().isEmpty(),
     check('price', 'Price must be a number').isNumeric(),
-    validateFields
+    validateFields,
+    validateJWT
+
 ], createProduct);
 
 router.get('/products', validateJWT, getAllProducts);

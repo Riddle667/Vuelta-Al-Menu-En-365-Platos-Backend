@@ -13,6 +13,8 @@ const Address = require('../models/address');
 const Order = require('../models/order');
 const Image = require('../models/Image');
 const OrderProduct = require('../models/orderProduct');
+const CategoryProduct = require('./categoryProduct');
+
 
 class Server {
     constructor() {
@@ -53,6 +55,7 @@ class Server {
             await Address.sync({ force: false });
             await Image.sync({ force: false });
             await OrderProduct.sync({ force: false });
+            await CategoryProduct.sync({ force: false });
             console.log('DATABASE CONNECTED');
         } catch (error) {
             console.log(error);

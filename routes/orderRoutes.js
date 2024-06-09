@@ -7,7 +7,7 @@ const { manageCart } = require("../controllers/orderController");
 
 const router = Router();
 
-router.put('/manage-cart',[
+router.post('/manage-cart',[
     validateJWT,
     validateFields,
     check('productId', 'Product ID is required').not().isEmpty(),
