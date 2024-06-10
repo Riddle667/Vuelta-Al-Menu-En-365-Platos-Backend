@@ -1,18 +1,25 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const logger = require('morgan');
-
 const fileUpload = require('express-fileupload');
 const db = require('../db/connection');
 const Role = require('../models/role');
 const User = require('../models/user');
 const Category = require('../models/category');
-const Product = require('./product');
+const Product = require('../models/product');
+const Address = require('../models/address');
+const Order = require('../models/order');
+const Image = require('../models/Image');
+const OrderProduct = require('../models/orderProduct');
+const CategoryProduct = require('./categoryProduct');
+
 
 class Server {
     constructor() {
         this.app = express();
-        this.port = process.env.PORT;
+        this.port = process.env.PORT || 3000;
         this.server = require('http').createServer(this.app);
 
         // Paths
@@ -21,8 +28,11 @@ class Server {
             user: '/api/user',
             upload: '/api/upload',
             category: '/api/category',
-            product: '/api/product'
-        }
+            product: '/api/product',
+            address: '/api/address',
+            order: '/api/order',
+            image: '/api/image'
+        };
 
         // Connect to database
         this.dbConnection();
@@ -40,6 +50,12 @@ class Server {
             await Role.sync({ force: false });
             await User.sync({ force: false });
             await Category.sync({ force: false });
+            await Product.sync({ force: false });
+            await Order.sync({ force: false });
+            await Address.sync({ force: false });
+            await Image.sync({ force: false });
+            await OrderProduct.sync({ force: false });
+            await CategoryProduct.sync({ force: false });
             console.log('DATABASE CONNECTED');
         } catch (error) {
             console.log(error);
@@ -47,7 +63,6 @@ class Server {
     }
 
     middlewares() {
-
         // Morgan
         this.app.use(logger('dev'));
 
@@ -71,6 +86,9 @@ class Server {
         this.app.use(this.paths.upload, require('../routes/uploadRoutes'));
         this.app.use(this.paths.category, require('../routes/categoryRoutes'));
         this.app.use(this.paths.product, require('../routes/productRoutes'));
+        this.app.use(this.paths.address, require('../routes/addressRoutes'));
+        this.app.use(this.paths.order, require('../routes/orderRoutes'));
+        this.app.use(this.paths.image, require('../routes/imageRoutes'));
     }
 
     listen() {

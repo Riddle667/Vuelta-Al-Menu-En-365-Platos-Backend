@@ -1,9 +1,32 @@
 const { Router } = require('express');
-const { createProduct } = require('../controllers/productController');
+const { createProduct, getAllProducts, getProductDetail, updateProduct, deleteProduct } = require('../controllers/productController');
+const { check } = require('express-validator');
+const { validateFields } = require('../middleware/validate-fields');
+const { validateJWT } = require('../middleware/validate-jwt');
 
 const router = Router();
 
-router.get('/create-product', createProduct);
+router.post('/create-product', [
+    check('name', 'Name is required').not().isEmpty(),
+    check('description', 'Description is required').not().isEmpty(),
+    check('price', 'Price must be a number').isNumeric(),
+    validateFields,
+    validateJWT
 
+], createProduct);
+
+router.get('/products', validateJWT, getAllProducts);
+
+router.get('/product/:id', validateJWT, getProductDetail);
+
+router.put('/update-product/:id', [
+    validateJWT,
+    check('name', 'Name is required').not().isEmpty(),
+    check('description', 'Description is required').not().isEmpty(),
+    check('price', 'Price must be a number').isNumeric(),
+    validateFields
+], updateProduct);
+
+router.delete('/delete-product/:id', validateJWT, deleteProduct);
 
 module.exports = router;

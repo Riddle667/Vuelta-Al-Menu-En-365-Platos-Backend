@@ -1,5 +1,7 @@
 const { Model, DataTypes } = require("sequelize");
 const db = require("../db/connection");
+const Address = require("./address");
+const Order = require("./order");
 
 
 
@@ -40,6 +42,8 @@ User.init({
 });
 
 User.Role = User.belongsTo(require('./role'), {foreignKey: 'role_id'});
+User.Address = User.hasMany(Address, {foreignKey: 'user_id', onDelete: 'CASCADE'});
+User.Order = User.hasMany(Order, {foreignKey: 'user_id'});
 
 User.prototype.toJSON = function() {
     const user = this.get();

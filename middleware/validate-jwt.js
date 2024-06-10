@@ -46,7 +46,6 @@ const validateJWT = async (req = request, res = response, next) => {
         })
     }
 
-    console.log(token);
 }
 
 
