@@ -44,6 +44,7 @@ User.init({
 User.Role = User.belongsTo(require('./role'), {foreignKey: 'role_id'});
 User.Address = User.hasMany(Address, {foreignKey: 'user_id', onDelete: 'CASCADE'});
 User.Order = User.hasMany(Order, {foreignKey: 'user_id'});
+User.Order = User.belongsTo(Order, {foreignKey: 'delivery_id'});
 
 User.prototype.toJSON = function() {
     const user = this.get();

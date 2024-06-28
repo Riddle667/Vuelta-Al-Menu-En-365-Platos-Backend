@@ -75,6 +75,136 @@ const manageCart = async (req = request, res = response) => {
     }
 }
 
+const showOrderDelivey = async (req = request, res = response) => {
+    const { id } = req.user;
+    try {
+        const ordersDispatched = await Order.findAll({
+            where: {
+                delivery_id: id,
+                status: 'dispatched'
+            },
+            include: [
+                {
+                    model: Product,
+                    through: {
+                        attributes: ['quantity', 'price']
+                    }
+                }
+            ]
+        });
+
+        const ordersOnTheWay = await Order.findAll({
+            where: {
+                delivery_id: id,
+                status: 'on_the_way'
+            },
+            include: [
+                {
+                    model: Product,
+                    through: {
+                        attributes: ['quantity', 'price']
+                    }
+                }
+            ]
+        });
+
+        const ordersDelivered = await Order.findAll({
+            where: {
+                delivery_id: id,
+                status: 'delivered'
+            },
+            include: [
+                {
+                    model: Product,
+                    through: {
+                        attributes: ['quantity', 'price']
+                    }
+                }
+            ]
+        });
+
+        return res.status(200).json({
+            success: true,
+            ordersDispatched,
+            ordersOnTheWay,
+            ordersDelivered
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
+    }
+}
+
+const showOrderClient = async (req = request, res = response) => {
+    const { id } = req.user;
+    try {
+        const ordersPending = await Order.findAll({
+            where: {
+                id: id,
+                status: 'pending'
+            },
+            include: [
+                {
+                    model: Product,
+                    through: {
+                        attributes: ['quantity', 'price']
+                    }
+                }
+            ]
+        });
+
+        const ordersDispatched = await Order.findAll({
+            where: {
+                id: id,
+                status: 'dispatched'
+            },
+            include: [
+                {
+                    model: Product,
+                    through: {
+                        attributes: ['quantity', 'price']
+                    }
+                }
+            ]
+        });
+
+        const ordersOnTheWay = await Order.findAll({
+            where: {
+                id: id,
+                status: 'on_the_way'
+            },
+            include: [
+                {
+                    model: Product,
+                    through: {
+                        attributes: ['quantity', 'price']
+                    }
+                }
+            ]
+        });
+
+        return res.status(200).json({
+            success: true,
+            ordersPending,
+            ordersDispatched,
+            ordersOnTheWay
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
+    }
+}
+
 module.exports = { 
-    manageCart 
+    manageCart,
+    showOrderDelivey,
+    showOrderClient
 };
