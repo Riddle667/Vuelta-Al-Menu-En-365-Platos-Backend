@@ -9,7 +9,8 @@ class Order extends Model {
     static total_price;
     static status;
     static date;
-    static cant
+    static cant;
+    static delivery_id;
 }
 
 Order.init({
@@ -19,16 +20,21 @@ Order.init({
     },
     status: {
         type: DataTypes.ENUM,
-        values: ['created', 'pending', 'on_the_way', 'delivered'],
+        values: ['created', 'pending', 'dispatched', 'on_the_way', 'delivered'],
         defaultValue: 'created'
     },
     date: {
         type: DataTypes.DATE,
-        allowNull: true
+        allowNull: false,
+        defaultValue: new Date()
     },
     cant: {
         type: DataTypes.INTEGER,
         defaultValue: 0
+    },
+    delivery_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true
     }
 }, {
     sequelize: db,
