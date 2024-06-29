@@ -2,7 +2,7 @@ const { Router } = require("express");
 const { validateJWT } = require("../middleware/validate-jwt");
 const { validateFields } = require("../middleware/validate-fields");
 const { check } = require("express-validator");
-const { manageCart, showOrderDelivey, showOrderClient } = require("../controllers/orderController");
+const { manageCart, showOrderDelivey, showOrderClient, getAllOrders, updateOrderStatus } = require('../controllers/orderController');
 
 
 const router = Router();
@@ -23,5 +23,12 @@ router.get('/get-orders-client',[
     validateJWT
 ], showOrderClient);
 
-module.exports = router;
+router.get('/orders', validateJWT, getAllOrders);
 
+router.put('/update-order/:id', [
+    validateJWT,
+    check('status', 'Status is required').not().isEmpty(),
+    validateFields
+], updateOrderStatus);
+
+module.exports = router;

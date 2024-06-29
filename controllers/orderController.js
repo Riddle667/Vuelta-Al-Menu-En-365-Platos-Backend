@@ -208,3 +208,78 @@ module.exports = {
     showOrderDelivey,
     showOrderClient
 };
+
+const getAllOrders = async (req = request, res = response) => {
+    try {
+        const orders = await Order.findAll({
+            include: [
+                {
+                    model: OrderProduct,
+                    include: [
+                        {
+                            model: Product,
+                            attributes: ['name', 'description', 'price', 'image']
+                        }
+                    ]
+                },
+                {
+                    model: User,
+                    attributes: ['name', 'lastName', 'email', 'phone']
+                }
+            ]
+        });
+
+        res.status(200).json({
+            success: true,
+            data: orders
+        });
+    } catch (error) {
+        console.error('Error in getAllOrders:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error',
+            error: error.message
+        });
+    }
+};
+
+const updateOrderStatus = async (req = request, res = response) => {
+    try {
+        const { id } = req.params;
+        const { status, delivery_id } = req.body;
+
+        const order = await Order.findByPk(id);
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found'
+            });
+        }
+
+        order.status = status;
+        if (delivery_id) {
+            order.delivery_id = delivery_id;
+        }
+
+        await order.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Order status updated successfully',
+            order
+        });
+    } catch (error) {
+        console.error('Error in updateOrderStatus:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error',
+            error: error.message
+        });
+    }
+};
+
+module.exports = {
+    manageCart,
+    getAllOrders,
+    updateOrderStatus
+};
