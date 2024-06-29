@@ -203,11 +203,6 @@ const showOrderClient = async (req = request, res = response) => {
     }
 }
 
-module.exports = { 
-    manageCart,
-    showOrderDelivey,
-    showOrderClient
-};
 
 const getAllOrders = async (req = request, res = response) => {
     try {
@@ -281,5 +276,7 @@ const updateOrderStatus = async (req = request, res = response) => {
 module.exports = {
     manageCart,
     getAllOrders,
-    updateOrderStatus
+    updateOrderStatus,
+    showOrderDelivey,
+    showOrderClient
 };
