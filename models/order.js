@@ -10,6 +10,7 @@ class Order extends Model {
     static status;
     static date;
     static cant;
+    static user_id;
     static delivery_id;
 }
 
@@ -32,6 +33,10 @@ Order.init({
         type: DataTypes.INTEGER,
         defaultValue: 0
     },
+    user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
     delivery_id: {
         type: DataTypes.INTEGER,
         allowNull: true
@@ -40,6 +45,7 @@ Order.init({
     sequelize: db,
     modelName: 'Order'
 });
+
 
 Order.belongsToMany(Product, {
     through: OrderProduct,
