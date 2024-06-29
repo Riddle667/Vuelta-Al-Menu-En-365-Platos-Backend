@@ -1,28 +1,32 @@
-const { Router, response, request} = require('express');
-const { register, login } = require('../controllers/authController');
+const { Router } = require('express');
+const { login, register, requestPasswordReset, resetPassword } = require('../controllers/authController');
 const { check } = require('express-validator');
 const { validateFields } = require('../middleware/validate-fields');
-const { verifyEmail, verifyEmailLogin } = require('../helpers/verify-email');
-
 
 const router = Router();
 
 router.post('/login', [
-    check('email', 'Email is required').not().isEmpty().isEmail(),
-    check('password', 'Password is required').not().isEmpty(),
-    check('email', 'email not exist').custom(verifyEmailLogin),
+    check('email', 'El correo electrónico es obligatorio').isEmail(),
+    check('password', 'La contraseña es obligatoria').not().isEmpty(),
     validateFields
-] , login);
+], login);
 
 router.post('/register', [
-    check('name', 'Name is required').not().isEmpty(),
-    check('lastname', 'Lastname is required').not().isEmpty(),
-    check('email', 'email exist').custom(verifyEmail),
-    check('email', 'Email is required').not().isEmpty().isEmail(),
-    check('password', 'Password is required').not().isEmpty(),
-    check('phone', 'Phone is required').not().isEmpty(),
+    check('name', 'El nombre es obligatorio').not().isEmpty(),
+    check('email', 'El correo electrónico es obligatorio').isEmail(),
+    check('password', 'La contraseña debe tener al menos 6 caracteres').isLength({ min: 6 }),
     validateFields
-] , register);
+], register);
 
+router.post('/request-password-reset', [
+    check('email', 'El correo electrónico es obligatorio').isEmail(),
+    validateFields
+], requestPasswordReset);
+
+router.post('/reset-password', [
+    check('token', 'El token es obligatorio').not().isEmpty(),
+    check('newPassword', 'La contraseña debe tener al menos 6 caracteres').isLength({ min: 6 }),
+    validateFields
+], resetPassword);
 
 module.exports = router;

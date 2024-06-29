@@ -1,9 +1,8 @@
-const { response, request } = require("express");
-const bcryptjs = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const { request, response } = require("express");
 const User = require("../models/user");
-const Role = require("../models/role");
-const generateJWT = require("../helpers/generate-jwt");
+const bcrypt = require("bcryptjs");
+const { generateJWT } = require("../helpers/generate-jwt");
+const { sendEmail } = require("../helpers/send-email");
 
 const login = async (req = request, res = response) => {
 
@@ -102,61 +101,87 @@ const register = async (req = request, res = response) => {
     }
 }
 
-const validateToken = async (req = request, res = response) => {
-    const authHeader = req.headers['authorization'];
-
-    // Separate the token from the "Bearer" prefix
-    token = authHeader && authHeader.split(' ')[1];
-
-    if (!token) {
-        return res.status(401).json({
-            success: false,
-            message: 'Not in token'
-        });
-    }
-
+const requestPasswordReset = async (req = request, res = response) => {
     try {
-        const { id } = jwt.verify(token, process.env.SECRET_OR_PRIVATE_KEY);
+        const { email } = req.body;
 
-        const user = await User.findByPk(id);
-
-        const {
-            name,
-            lastName,
-            phone,
-            email,
-            image,
-            role_id
-        } = user;
-
-        const dataUser = { id, name, lastName, phone, email, image, role_id, session_token: token };
-
-        if (user) {
-            return res.status(200).json({
-                success: true,
-                message: 'Token is valid',
-                data: dataUser
-            })
-        }
-    } catch (error) {
-        if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({
+        const user = await User.findOne({ where: { email } });
+        if (!user) {
+            return res.status(404).json({
                 success: false,
-                message: 'Token expired',
-                expired: true,
-                error
+                message: 'El correo electrónico no está registrado en el sistema.'
             });
         }
-        return res.status(401).json({
+
+        const resetToken = generateJWT(user.id, '1h'); // Genera un token válido por 1 hora
+        const resetURL = `http://localhost:3000/reset-password?token=${resetToken}`;
+
+        // Enviar correo electrónico
+        await sendEmail({
+            to: email,
+            subject: 'Restablecimiento de contraseña',
+            text: `Haga clic en el siguiente enlace para restablecer su contraseña: ${resetURL}`
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Correo electrónico enviado con éxito para restablecer la contraseña.'
+        });
+    } catch (error) {
+        console.error('Error in requestPasswordReset:', error);
+        res.status(500).json({
             success: false,
-            message: 'Invalid token',
-            error
+            message: 'Server error',
+            error: error.message
         });
     }
-}
+};
+
+const resetPassword = async (req = request, res = response) => {
+    try {
+        const { token, newPassword } = req.body;
+
+        const { uid } = await verifyJWT(token); // Verificar el token y obtener el UID del usuario
+
+        const user = await User.findByPk(uid);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado.'
+            });
+        }
+
+        // Validar la nueva contraseña
+        if (newPassword.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: 'La contraseña debe tener al menos 6 caracteres.'
+            });
+        }
+
+        // Hash de la nueva contraseña
+        const salt = bcrypt.genSaltSync();
+        user.password = bcrypt.hashSync(newPassword, salt);
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Contraseña restablecida con éxito.'
+        });
+    } catch (error) {
+        console.error('Error in resetPassword:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error',
+            error: error.message
+        });
+    }
+};
 
 module.exports = {
     login,
     register,
-    validateToken
-}
+    requestPasswordReset,
+    resetPassword
+};
