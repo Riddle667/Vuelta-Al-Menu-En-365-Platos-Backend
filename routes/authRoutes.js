@@ -1,5 +1,5 @@
 const { Router, response, request} = require('express');
-const { register, login } = require('../controllers/authController');
+const { register, login, validateToken } = require('../controllers/authController');
 const { check } = require('express-validator');
 const { validateFields } = require('../middleware/validate-fields');
 const { verifyEmail, verifyEmailLogin } = require('../helpers/verify-email');
@@ -23,6 +23,8 @@ router.post('/register', [
     check('phone', 'Phone is required').not().isEmpty(),
     validateFields
 ] , register);
+
+router.get('/validate-token', validateToken);
 
 
 module.exports = router;
