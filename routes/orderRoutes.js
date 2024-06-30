@@ -3,6 +3,7 @@ const { validateJWT } = require("../middleware/validate-jwt");
 const { validateFields } = require("../middleware/validate-fields");
 const { check } = require("express-validator");
 const { manageCart, showOrderDelivey, showOrderClient, getAllOrders, updateOrderStatus } = require('../controllers/orderController');
+const { createPayment } = require("../controllers/stripeController");
 
 
 const router = Router();
@@ -30,5 +31,7 @@ router.put('/update-order/:id', [
     check('status', 'Status is required').not().isEmpty(),
     validateFields
 ], updateOrderStatus);
+
+router.post('/payments', createPayment);
 
 module.exports = router;

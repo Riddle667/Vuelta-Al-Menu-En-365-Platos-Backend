@@ -3,6 +3,7 @@ const db = require("../db/connection");
 const User = require("./user");
 const OrderProduct = require("./orderProduct");
 const Product = require("./product");
+const Address = require("./address");
 
 class Order extends Model {
     static id;
@@ -40,10 +41,19 @@ Order.init({
     delivery_id: {
         type: DataTypes.INTEGER,
         allowNull: true
+    },
+    address_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true
     }
 }, {
     sequelize: db,
     modelName: 'Order'
+});
+
+Order.belongsTo(Address, {
+    foreignKey: 'address_id',
+    onDelete: 'CASCADE'
 });
 
 
@@ -53,5 +63,18 @@ Order.belongsToMany(Product, {
     otherKey: 'product_id',
     onDelete: 'CASCADE'
 });
+
+Order.prototype.toJSON = function() {
+    const order = this.get();
+    const address = Address.findByPk(order.address_id);
+
+    if (!address) {
+        return order;
+    }
+    delete order.address_id;
+    order.address = address;
+
+    return order;
+};
 
 module.exports = Order;

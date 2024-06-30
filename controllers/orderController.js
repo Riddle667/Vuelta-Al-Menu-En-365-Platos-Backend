@@ -70,7 +70,8 @@ const manageCart = async (req = request, res = response) => {
         console.error(error);
         return res.status(500).json({
             success: false,
-            message: 'Internal server error'
+            message: 'Internal server error',
+            error,
         });
     }
 }
@@ -209,17 +210,10 @@ const getAllOrders = async (req = request, res = response) => {
         const orders = await Order.findAll({
             include: [
                 {
-                    model: OrderProduct,
-                    include: [
-                        {
-                            model: Product,
-                            attributes: ['name', 'description', 'price', 'image']
-                        }
-                    ]
-                },
-                {
-                    model: User,
-                    attributes: ['name', 'lastName', 'email', 'phone']
+                    model: Product,
+                    through: {
+                        attributes: ['quantity', 'price']
+                    }
                 }
             ]
         });
@@ -240,10 +234,10 @@ const getAllOrders = async (req = request, res = response) => {
 
 const updateOrderStatus = async (req = request, res = response) => {
     try {
-        const { id } = req.params;
-        const { status, delivery_id } = req.body;
+        const { orderId, status, delivery_id } = req.body;
 
-        const order = await Order.findByPk(id);
+        const order = await Order.findByPk(orderId);
+
         if (!order) {
             return res.status(404).json({
                 success: false,
@@ -254,8 +248,9 @@ const updateOrderStatus = async (req = request, res = response) => {
         order.status = status;
         if (delivery_id) {
             order.delivery_id = delivery_id;
+            
         }
-
+        
         await order.save();
 
         res.status(200).json({
