@@ -2,7 +2,8 @@ const { Router } = require("express");
 const { validateJWT } = require("../middleware/validate-jwt");
 const { validateFields } = require("../middleware/validate-fields");
 const { check } = require("express-validator");
-const { manageCart } = require("../controllers/orderController");
+const { manageCart, showOrderDelivey, showOrderClient, getAllOrders, updateOrderStatus } = require('../controllers/orderController');
+const { createPayment } = require("../controllers/stripeController");
 
 
 const router = Router();
@@ -15,5 +16,22 @@ router.post('/manage-cart',[
     check('quantity', 'Quantity must be greater than 0').isInt({ min: 1 })
 ], manageCart);
 
-module.exports = router;
+router.get('/get-orders-delivery',[
+    validateJWT
+], showOrderDelivey);
 
+router.get('/get-orders-client',[
+    validateJWT
+], showOrderClient);
+
+router.get('/orders', validateJWT, getAllOrders);
+
+router.put('/update-order/:id', [
+    validateJWT,
+    check('status', 'Status is required').not().isEmpty(),
+    validateFields
+], updateOrderStatus);
+
+router.post('/payments', createPayment);
+
+module.exports = router;

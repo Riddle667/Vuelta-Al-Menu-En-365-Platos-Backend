@@ -72,9 +72,41 @@ const createAddress = async (req, res) => {
     }
 };
 
+const saveReferencePoint = async (req = request, res = response) => {
+    try {
+        const { userId, address, latitude, longitude } = req.body;
 
+        if (!userId || !address || !latitude || !longitude) {
+            return res.status(400).json({
+                success: false,
+                message: "All fields are required"
+            });
+        }
+
+        const newAddress = await Address.create({
+            userId,
+            address,
+            latitude,
+            longitude
+        });
+
+        res.status(201).json({
+            success: true,
+            message: "Reference point saved successfully",
+            data: newAddress
+        });
+    } catch (error) {
+        console.error('Error in saveReferencePoint:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error',
+            error: error.message
+        });
+    }
+};
 
 module.exports = {
     showAddress,
-    createAddress
-}
+    createAddress,
+    saveReferencePoint
+};

@@ -22,6 +22,7 @@
     "morgan": "^1.10.0",
     "mysql2": "^3.9.7",
     "nodemailer": "^6.9.13",
-    "sequelize": "^6.37.3"
+    "sequelize": "^6.37.3",
+    "stripe": "^16.1.0"
   }
 }
