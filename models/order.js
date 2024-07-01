@@ -3,13 +3,16 @@ const db = require("../db/connection");
 const User = require("./user");
 const OrderProduct = require("./orderProduct");
 const Product = require("./product");
+const Address = require("./address");
 
 class Order extends Model {
     static id;
     static total_price;
     static status;
     static date;
-    static cant
+    static cant;
+    static user_id;
+    static delivery_id;
 }
 
 Order.init({
@@ -19,21 +22,40 @@ Order.init({
     },
     status: {
         type: DataTypes.ENUM,
-        values: ['created', 'pending', 'on_the_way', 'delivered'],
+        values: ['created', 'pending', 'dispatched', 'on_the_way', 'delivered'],
         defaultValue: 'created'
     },
     date: {
         type: DataTypes.DATE,
-        allowNull: true
+        allowNull: false,
+        defaultValue: new Date()
     },
     cant: {
         type: DataTypes.INTEGER,
         defaultValue: 0
+    },
+    user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    delivery_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
+    address_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true
     }
 }, {
     sequelize: db,
     modelName: 'Order'
 });
+
+Order.belongsTo(Address, {
+    foreignKey: 'address_id',
+    onDelete: 'CASCADE'
+});
+
 
 Order.belongsToMany(Product, {
     through: OrderProduct,
@@ -41,5 +63,7 @@ Order.belongsToMany(Product, {
     otherKey: 'product_id',
     onDelete: 'CASCADE'
 });
+
+
 
 module.exports = Order;
