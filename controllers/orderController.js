@@ -145,7 +145,7 @@ const showOrderClient = async (req = request, res = response) => {
     try {
         const ordersPending = await Order.findAll({
             where: {
-                id: id,
+                user_id: id,
                 status: 'pending'
             },
             include: [
@@ -158,9 +158,11 @@ const showOrderClient = async (req = request, res = response) => {
             ]
         });
 
+        
+
         const ordersDispatched = await Order.findAll({
             where: {
-                id: id,
+                user_id: id,
                 status: 'dispatched'
             },
             include: [
@@ -169,13 +171,14 @@ const showOrderClient = async (req = request, res = response) => {
                     through: {
                         attributes: ['quantity', 'price']
                     }
-                }
+                },
             ]
         });
 
+
         const ordersOnTheWay = await Order.findAll({
             where: {
-                id: id,
+                user_id: id,
                 status: 'on_the_way'
             },
             include: [
